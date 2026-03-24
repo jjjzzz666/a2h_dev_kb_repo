@@ -1,4 +1,4 @@
-name: Sync repo1
+name: Sync Repo1 to dev
 on:
   workflow_dispatch:
 
@@ -18,8 +18,14 @@ jobs:
         run: |
           git config --global user.name "jjjzzz666"
           git config --global user.email "jjjzzz666@users.noreply.github.com"
+          git config --global lfs.allowincompletepush true
 
-      - name: Download repo1
+      # 自动创建并切换到 dev 分支
+      - name: Create dev branch
+        run: |
+          git checkout -B dev
+
+      - name: Update repo1
         run: |
           rm -rf openharmony-applications_app_samples
           mkdir -p temp
@@ -28,8 +34,8 @@ jobs:
           find temp -type d -empty -delete
           mv temp openharmony-applications_app_samples
 
-      - name: Push
+      - name: Push to dev
         run: |
           git add .
-          git commit -m "update repo1"
-          git push origin main
+          git commit -m "update repo1" || true
+          git push origin dev --no-verify
