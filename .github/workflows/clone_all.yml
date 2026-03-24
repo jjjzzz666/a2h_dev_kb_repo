@@ -1,4 +1,4 @@
-name: Sync ALL 4 Repos - FRESH BRANCH
+name: Sync FINAL ALL (NO LFS EVER)
 on:
   workflow_dispatch:
 
@@ -14,54 +14,58 @@ jobs:
           lfs: false
           fetch-depth: 0
 
-      - name: 配置Git + 重建全新干净分支（抛弃所有LFS历史）
+      - name: 新建干净分支 + 彻底清空
         run: |
           git config --global user.name "jjjzzz666"
           git config --global user.email "jjjzzz666@users.noreply.github.com"
-          git checkout --orphan clean_branch
+          git checkout --orphan new_branch
           rm -rf ./*
           rm -f .gitattributes .gitmodules
 
-      # ========================= REPO 1 =========================
-      - name: 下载仓库1
+      # ========== REPO 1 ==========
+      - name: Repo1
         run: |
           mkdir -p temp
           curl -L https://github.com/openharmony/applications_app_samples/archive/refs/heads/master.tar.gz | tar xz --strip 1 -C temp
+          rm -f temp/.gitattributes temp/.lfsconfig
           find temp -size +10M -delete
           find temp -type d -empty -delete
           mv temp openharmony-applications_app_samples
 
-      # ========================= REPO 2 =========================
-      - name: 下载仓库2
+      # ========== REPO 2 ==========
+      - name: Repo2
         run: |
           mkdir -p temp
           curl -L https://github.com/openharmony/docs/archive/refs/heads/master.tar.gz | tar xz --strip 1 -C temp
+          rm -f temp/.gitattributes temp/.lfsconfig
           find temp -size +10M -delete
           find temp -type d -empty -delete
           mv temp openharmony-docs
 
-      # ========================= REPO 3 =========================
-      - name: 下载仓库3
+      # ========== REPO 3 ==========
+      - name: Repo3
         run: |
           mkdir -p temp
           curl -L https://github.com/openharmony/interface_sdk-js/archive/refs/heads/master.tar.gz | tar xz --strip 1 -C temp
+          rm -f temp/.gitattributes temp/.lfsconfig
           find temp -size +10M -delete
           find temp -type d -empty -delete
           mv temp openharmony-interface_sdk-js
 
-      # ========================= REPO 4 =========================
-      - name: 下载仓库4
+      # ========== REPO 4 ==========
+      - name: Repo4
         run: |
           git clone https://gitcode.com/HarmonyOS_Samples/guide-snippets.git --depth=1 temp
           rm -rf temp/.git
+          rm -f temp/.gitattributes temp/.lfsconfig
           find temp -size +10M -delete
           find temp -type d -empty -delete
           mv temp HarmonyOS_Samples-guide-snippets
 
-      # ===================== 强制覆盖推送 =====================
-      - name: 提交并强制推送（全新干净历史）
+      # ========== 强制推送，无任何检查 ==========
+      - name: Push FINAL
         run: |
           git add .
-          git commit -m "fresh sync all 4 repos (no LFS)"
-          git branch -M clean_branch main
-          git push origin main --force
+          git commit -m "final full sync"
+          git branch -M new_branch main
+          git push origin main --force --no-verify
