@@ -1,4 +1,4 @@
-name: Add repo4 - HarmonyOS_Samples-guide-snippets
+name: Sync repo4
 on:
   workflow_dispatch:
 
@@ -14,24 +14,22 @@ jobs:
           lfs: false
           fetch-depth: 0
 
-      - name: 配置Git
+      - name: Git config
         run: |
           git config --global user.name "jjjzzz666"
           git config --global user.email "jjjzzz666@users.noreply.github.com"
 
-      - name: 下载 repo4 (GitCode)
+      - name: Download repo4
         run: |
+          rm -rf HarmonyOS_Samples-guide-snippets
           git clone https://gitcode.com/HarmonyOS_Samples/guide-snippets.git --depth=1 temp
           rm -rf temp/.git
-
-          # 只保留源码，无大文件、无LFS
-          find temp -type f ! -name "*.java" ! -name "*.js" ! -name "*.ts" ! -name "*.md" ! -name "*.json" ! -name "*.xml" ! -name "*.py" ! -name "*.cpp" ! -name "*.h" -delete
+          find temp -size +10M -delete
           find temp -type d -empty -delete
-
           mv temp HarmonyOS_Samples-guide-snippets
 
-      - name: 提交推送
+      - name: Push
         run: |
           git add .
-          git commit -m "add repo4: HarmonyOS_Samples-guide-snippets"
+          git commit -m "update repo4"
           git push origin main
