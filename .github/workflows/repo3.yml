@@ -1,4 +1,4 @@
-name: Add repo3 - interface_sdk-js
+name: Sync repo3
 on:
   workflow_dispatch:
 
@@ -14,24 +14,22 @@ jobs:
           lfs: false
           fetch-depth: 0
 
-      - name: 配置Git
+      - name: Git config
         run: |
           git config --global user.name "jjjzzz666"
           git config --global user.email "jjjzzz666@users.noreply.github.com"
 
-      - name: 下载 repo3 (interface_sdk-js)
+      - name: Download repo3
         run: |
+          rm -rf openharmony-interface_sdk-js
           mkdir -p temp
           curl -L https://github.com/openharmony/interface_sdk-js/archive/refs/heads/master.tar.gz | tar xz --strip 1 -C temp
-
-          # 只保留源码文本
-          find temp -type f ! -name "*.java" ! -name "*.js" ! -name "*.ts" ! -name "*.md" ! -name "*.json" ! -name "*.xml" ! -name "*.py" ! -name "*.cpp" ! -name "*.h" -delete
+          find temp -size +10M -delete
           find temp -type d -empty -delete
-
           mv temp openharmony-interface_sdk-js
 
-      - name: 提交推送
+      - name: Push
         run: |
           git add .
-          git commit -m "add repo3: openharmony-interface_sdk-js"
+          git commit -m "update repo3"
           git push origin main
