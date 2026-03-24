@@ -1,4 +1,4 @@
-name: Sync repo2
+name: Sync Repo2 to dev
 on:
   workflow_dispatch:
 
@@ -13,13 +13,15 @@ jobs:
         with:
           lfs: false
           fetch-depth: 0
+          ref: dev
 
       - name: Git config
         run: |
           git config --global user.name "jjjzzz666"
           git config --global user.email "jjjzzz666@users.noreply.github.com"
+          git config --global lfs.allowincompletepush true
 
-      - name: Download repo2
+      - name: Update repo2
         run: |
           rm -rf openharmony-docs
           mkdir -p temp
@@ -31,5 +33,5 @@ jobs:
       - name: Push
         run: |
           git add .
-          git commit -m "update repo2"
-          git push origin main
+          git commit -m "update repo2" || true
+          git push origin dev --no-verify
